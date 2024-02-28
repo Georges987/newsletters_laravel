@@ -1,5 +1,5 @@
 <script>
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
 export default {
     components: {
         Head,
