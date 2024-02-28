@@ -13,19 +13,24 @@ class SendController extends Controller
     {
         $request->validate([
             'title' => 'required',
-            'content' => 'required'
+            'content' => 'required',
+            'one' => 'required',
         ]);
 
         $subject = $request->subject;
         $message = $request->content;
 
-        $te = [];
         $subscribers = Usermail::get();
-        foreach($subscribers as $row) {
-            Mail::to($row->email)->send(new Newsmail($subject,$message));
+        if (!$request->one) {
+            foreach($subscribers as $row) {
+                Mail::to($row->email)->send(new Newsmail($subject,$message));
+            }
         }
-
-        dd($te);
+        else {
+            foreach($subscribers as $row) {
+                Mail::to($row->email)->send(new Newsmail($subject,$message));
+            }
+        }
 
         return redirect()->back()->with('success', 'Email is Sent Successfully.');
     }

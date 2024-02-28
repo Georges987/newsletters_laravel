@@ -1,15 +1,38 @@
 <script>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
+import Checkbox from '@/Components/Checkbox.vue';
 export default {
     components: {
         Head,
-        AuthenticatedLayout
+        AuthenticatedLayout,
+        Checkbox,
     },
     data() {
         return {
             title: "",
-            content: ""
+            content: "",
+            one: false,
+            selectedItems: [],
+            items: [
+                {
+                    text: "Foo",
+                    value: "foo"
+                },
+                {
+                    text: "Bar",
+                    value: "bar"
+                },
+                {
+                    text: "Biz",
+                    value: "biz"
+                },
+                {
+                    text: "Buzz",
+                    value: "buzz"
+                }
+            ]
+
         }
     },
     methods: {
@@ -17,8 +40,16 @@ export default {
             this.$inertia.post(route('sendnews'), {
                 title: this.title,
                 content: this.content,
+                one: this.one,
             });
         },
+        getItemLabel(value) {
+            const item = this.items.find(item => item.value === value)
+            return item ? item.text : value
+        },
+        removeItem(item) {
+            this.selectedItems = this.selectedItems.filter(value => value !== item)
+        }
     }
 }
 </script>
@@ -46,7 +77,31 @@ export default {
                             <label for="content">Contenu de la news</label>
                             <textarea v-model="content" cols="30" rows="10"></textarea>
                         </div>
-                        <div @click="submit()" class="p-5 my-2 cursor-pointer hover:bg-blue-800 transition-all duration-150 ease-in-out bg-blue-700 w-max">
+
+
+
+                        <div class="container mx-auto">
+                            <select v-model="selectedItems" multiple
+                                class="block w-full bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                                <option v-for="item in items" :key="item.value" :value="item.value"
+                                    class="block w-full text-gray-700 bg-white border-b border-gray-300">
+                                    {{ item.text }}
+                                </option>
+                            </select>
+                            <div class="mt-2 space-y-2">
+                                <span v-for="item in selectedItems" :key="item"
+                                    class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-indigo-100 text-indigo-700">
+                                    {{ getItemLabel(item) }}
+                                    <button @click="removeItem(item)" class="ml-2 text-indigo-700 hover:text-indigo-900">
+                                        x
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+
+
+                        <div @click="submit()"
+                            class="p-5 my-2 cursor-pointer hover:bg-blue-800 transition-all duration-150 ease-in-out bg-blue-700 w-max">
                             Envoyer
                         </div>
                     </div>
